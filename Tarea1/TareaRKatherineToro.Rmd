@@ -1,0 +1,41 @@
+---
+title: "TareaRKT"
+author: "Katherine Toro"
+date: "2023-02-22"
+output: html_document
+---
+
+```{r}
+#Cargar librerías
+library(ggplot2)
+library(ggpubr)
+library(ggpmisc)
+library(dplyr)
+library(tidyverse)
+library(scales)
+
+#Cargando Dataframe de WHO
+data(who)
+
+#En la variable df asignar dataframe WHO con filtros para info que va del año 1996 a 2012, los ejes de la gráfica. 
+df <- who %>% 
+  filter(year >= 1996, year <= 2012) %>%
+  ggplot(aes(x = new_sp_f014, y = new_sp_m014, color = factor(year))) +
+  geom_point(size = 0.4) +
+  geom_jitter(size = 0.5, alpha = 0.2, na.rm = TRUE) +
+  labs(x = "Casos positivos de tuberculosis en niñas de 0 a 14 años",
+       y = "Casos positivos de tuberculosis en niños de 0 a 14 años") +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = FALSE, formula = y ~ x) +
+  stat_poly_eq(formula = y ~ x, aes(label = paste(stat(eq.label), stat(adj.rr.label), sep = "*\", \"*")), 
+               parse = TRUE, size = 3, label.x.npc = 0.15, label.y.npc = 1, 
+               coef.digits = 2) +
+  facet_wrap(. ~ year) +
+  theme_classic() +
+  theme(legend.position = "none")
+#Hemos definido el tamaño de los puntos en la grafica de 0.4 y la dispersión entre puntos en 0.5.
+#Agregamos las etiquetas a los ejes.
+df
+```
+
